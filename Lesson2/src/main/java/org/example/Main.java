@@ -25,5 +25,6 @@ public class Main {
             System.out.println(stackTraceElement.getMethodName() + " " + stackTraceElement.getLineNumber());
         }
         System.out.println("Метод test2");
+        System.out.println("check");
     }
 }
