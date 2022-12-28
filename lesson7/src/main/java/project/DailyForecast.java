@@ -87,7 +87,9 @@ public class DailyForecast implements Serializable
 
     @JsonProperty("Day")
     public void setDay(Day day) {
+
         this.day = day;
+
     }
 
     @JsonProperty("Night")
@@ -104,6 +106,10 @@ public class DailyForecast implements Serializable
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
+    }
+
+    public void setAdditionalProperties(Map<String, Object> additionalProperties) {
+        this.additionalProperties = additionalProperties;
     }
 
     @JsonAnySetter

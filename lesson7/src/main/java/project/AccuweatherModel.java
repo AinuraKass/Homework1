@@ -6,7 +6,10 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import project.entity.Weather;
+
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 public class AccuweatherModel implements WeatherModel {
@@ -18,7 +21,7 @@ public class AccuweatherModel implements WeatherModel {
     private static final String DAILY = "daily";
     private static final String ONE_DAY = "1day";
     private static final String FIVE_DAY = "5day";
-    private static final String API_KEY = "EyPZ5l3Q7aAbVSCZ6PGd8AWrRbHA9GSq";
+    private static final String API_KEY = "GTuooaBjQULRc3mdhH6U9gALZYiliABS";
 
     private static final String API_KEY_QUERY_PARAM = "apikey";
     private static final String LOCATIONS = "locations";
@@ -27,7 +30,7 @@ public class AccuweatherModel implements WeatherModel {
 
     private static final OkHttpClient okHttpClient = new OkHttpClient();
     private static final ObjectMapper objectMapper = new ObjectMapper();
-
+    private DataBaseRepository dataBaseRepository = new DataBaseRepository();
 
 
     public void getWeather(String selectedCity, Period period) throws IOException {
@@ -51,13 +54,28 @@ public class AccuweatherModel implements WeatherModel {
                 Response oneDayForecastResponse = okHttpClient.newCall(request).execute();
                 String weatherResponse = oneDayForecastResponse.body().string();
 
+
            WeatherResponse WeatherFromResponse = objectMapper.readValue(weatherResponse, WeatherResponse.class);
+                System.out.println("В городе " + selectedCity + ": " + WeatherFromResponse);
+                String date = objectMapper.readTree(weatherResponse).get(1).at("/Date").asText();
+                Double temperature = Double.valueOf(objectMapper.readTree(weatherResponse).get(1).at("/Unit").asText());
 
          System.out.println("В городе " + selectedCity + ": " + WeatherFromResponse);
 //                System.out.println(weatherResponse);
                 //TODO: сделать человекочитаемый вывод погоды. Выбрать параметры для вывода на свое усмотрение
+
+
+
                 //Например: Погода в городе Москва - 5 градусов по цельсию Expect showers late Monday night
-                //dataBaseRepository.saveWeatherToDataBase(new Weather()) - тут после парсинга добавляем данные в БД
+
+                try {
+                    dataBaseRepository.saveWeatherToDataBase(new Weather(selectedCity, date,  temperature));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
+//                        - тут после парсинга добавляем данные в БД
+//
                 break;
             case FIVE_DAYS:
                 HttpUrl httpUrlFiveDays = new HttpUrl.Builder()
@@ -114,6 +132,11 @@ public class AccuweatherModel implements WeatherModel {
         String cityKey = objectMapper.readTree(responseString).get(0).at("/Key").asText();
         return cityKey;
 
+    }
+
+    @Override
+    public List<Weather> getSavedToDBWeather() {
+        return dataBaseRepository.getSavedToDBWeather();
     }
 
     public static void main(String[] args) {
