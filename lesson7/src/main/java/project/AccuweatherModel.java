@@ -57,22 +57,27 @@ public class AccuweatherModel implements WeatherModel {
 
            WeatherResponse WeatherFromResponse = objectMapper.readValue(weatherResponse, WeatherResponse.class);
                 System.out.println("В городе " + selectedCity + ": " + WeatherFromResponse);
-                String date = objectMapper.readTree(weatherResponse).get(1).at("/Date").asText();
-                Double temperature = Double.valueOf(objectMapper.readTree(weatherResponse).get(1).at("/Unit").asText());
+//                String date = objectMapper.readTree(weatherResponse).get(1).at("/Date").asText();
+//                Double temperature = Double.valueOf(objectMapper.readTree(weatherResponse).get(1).at("/Unit").asText());
+
+
 
          System.out.println("В городе " + selectedCity + ": " + WeatherFromResponse);
 //                System.out.println(weatherResponse);
                 //TODO: сделать человекочитаемый вывод погоды. Выбрать параметры для вывода на свое усмотрение
 
 
+                DailyForecast date = new DailyForecast();
+
+                Maximum temperature = new Maximum();
 
                 //Например: Погода в городе Москва - 5 градусов по цельсию Expect showers late Monday night
-
                 try {
-                    dataBaseRepository.saveWeatherToDataBase(new Weather(selectedCity, date,  temperature));
+                    dataBaseRepository.saveWeatherToDataBase(new Weather(selectedCity, date.getDate(),  temperature.getValue()));
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
+
 
 //                        - тут после парсинга добавляем данные в БД
 //
@@ -96,9 +101,15 @@ public class AccuweatherModel implements WeatherModel {
                 Response fiveDayForecastResponse = okHttpClient.newCall(requestFiveDays).execute();
                 String weatherResponseFiveDays = fiveDayForecastResponse.body().string();
                 WeatherResponse WeatherFromResponseFiveDays = objectMapper.readValue(weatherResponseFiveDays, WeatherResponse.class);
-
-                System.out.println("В городе " + selectedCity + ": " + WeatherFromResponseFiveDays);
-
+//                String date5 = objectMapper.readTree(weatherResponseFiveDays).get(1).at("/Date").asText();
+//                Double temperature5 = Double.valueOf(objectMapper.readTree(weatherResponseFiveDays).get(1).at("/Unit").asText());
+//
+//                System.out.println("В городе " + selectedCity + ": " + WeatherFromResponseFiveDays);
+//                try {
+//                    dataBaseRepository.saveWeatherToDataBase(new Weather(selectedCity, date5,  temperature5));
+//                } catch (SQLException e) {
+//                    throw new RuntimeException(e);
+//                }
 
 //                System.out.println(weatherResponseFiveDays);
                 //TODO*: реализовать вывод погоды на 5 дней

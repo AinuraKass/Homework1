@@ -17,7 +17,7 @@ public class UserInterfaceView {
                     "Введите 5 для прогноза на 5 дней; Введите 2 для получения данных из базы; Для выхода введите 0:");
 
             String command = scanner.nextLine();
-            if (!command.equals("1") && !command.equals("5") && !command.equals("0")) {
+            if (!command.equals("1") && !command.equals("5") && !command.equals("0") && !command.equals("2")) {
                 System.out.println("Введите корректное значение, возможные варианты - 1,5,0");
                 command = scanner.nextLine();
             }

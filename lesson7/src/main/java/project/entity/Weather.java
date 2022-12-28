@@ -1,7 +1,6 @@
 package project.entity;
 
 
-
 public class Weather {
     private String city;
     private String localDate;
